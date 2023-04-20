@@ -1,0 +1,5 @@
+node_modules
+src
+src/extension.ts
+.github
+.vscode

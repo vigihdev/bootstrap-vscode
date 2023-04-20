@@ -1,0 +1,17 @@
+#ignoreall.afiles
+node_modules
+out
+.DS_Store
+composer.lock
+server.js
+jest.config.js
+node_modules
+test
+ScreenShot2023-01-21at08.31.17.png
+nodemon.json
+__mocks__
+out
+__mockup__
+package-lock.json
+.vscode
+vscode-devtools-1.0.0.vsix
