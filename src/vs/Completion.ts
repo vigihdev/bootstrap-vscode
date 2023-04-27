@@ -1,6 +1,7 @@
 
-import { CompletionItem, CompletionItemKind, MarkdownString, SnippetString } from 'vscode';
+import { CompletionItem, CompletionItemKind, MarkdownString, Position, SnippetString, TextDocument } from 'vscode';
 import { TAG, kind } from '../constant';
+import { DocumentHelper } from './documentHelper';
 
 export class Completion extends CompletionItem {
 	label: string;
@@ -37,9 +38,19 @@ export class Completion extends CompletionItem {
 		items = [...new Set(items)];
 		items.sort();
 		items.forEach(value => {
-			const item = new Completion(value, kind.Class, 'a', TAG, TAG + ' ' + value, value);
+			const item = new Completion(value, kind.Class, 'a', TAG, `${TAG} ${value}`, value);
 			completion.push(item);
 		});
+		return completion;
+	}
+
+	static simpleRangeSpace(items: string[], document: TextDocument, position: Position): Completion[] {
+		const completion: Completion[] = [];
+		const doc = new DocumentHelper(document, position);
+		Completion.simple(items)?.forEach(item => {
+			item.range = doc.rangeAtSpace();
+			completion.push(item);
+		})
 		return completion;
 	}
 }

@@ -1,67 +1,75 @@
 import { ExtensionContext, TextDocument, Uri, languages, workspace } from "vscode";
 import { Completion } from "./vs/Completion";
 import { DocumentHelper } from "./vs/documentHelper";
-import { FILENAME_BOOTSTRAP4, FILENAME_EXTENSION, FILENAME_YII2_ASSETS, TAG, VENDOR_DB } from "./constant";
 import { commandsExtension } from "./commandsExtension";
-import { getContentBootstrap4Url } from "./fs2/client";
 import { ExtensionInit } from "./extensionInit";
-import { readFileJson, readFiles, saveFile } from "./fs2/files";
-import path = require("node:path");
-import { Contexts } from "./contexts";
-import { getWorkspaceFirst, updateActivateCompletion } from "./workspaceFs";
-import { mixin } from "./common/objects";
+import { fileNameYii2, hasWorkspaceYii2, isFile } from "./vs/util";
+import { readFiles } from "./vs/fsApi";
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-const fileExt = Contexts.getExtension('dbPath') + path.sep + FILENAME_EXTENSION;
-const fileBs4 = Contexts.getExtension('dbPath') + path.sep + FILENAME_BOOTSTRAP4;
-const fileyii2 = Contexts.getExtension('dbPath') + path.sep + FILENAME_YII2_ASSETS;
 
 export async function activate(context: ExtensionContext): Promise<void> {
-    console.log(TAG + ' activate');
+    //console.log(' activate');
     ExtensionInit.from(context);
     commandsExtension(context);
-    //updateActivateCompletion('bootstrap4')
-    //console.log(getWorkspaceFirst());
 
-    workspace.onDidOpenTextDocument((document: TextDocument) => {
-        console.log('onDidOpenTextDocument');
-    });
+    workspace.onDidOpenTextDocument((document: TextDocument) => { });
+    switch (true) {
+        case hasWorkspaceYii2() && isFile(fileNameYii2):
+            await activateYii2(context);
+            break;
+        default:
+            await activateBs4(context);
+    }
+}
 
+async function activateBs4(context: ExtensionContext): Promise<void> {
     const subscriptions = context.subscriptions;
-
-    const provider = languages.registerCompletionItemProvider(['php', 'html'], {
-        async provideCompletionItems(document, position, token, ctx) {
+    const lang = ['php', 'html', 'javascript'];
+    const trigger = [' '];
+    const provider = languages.registerCompletionItemProvider(lang, {
+        async provideCompletionItems(document, position, token, ctx): Promise<Completion[]> {
             const completion: Completion[] = [];
             const docs = new DocumentHelper(document, position);
-            const data = readFiles(fileyii2)
-
             if (docs.rangeAtHtmlClass()) {
-                Completion.simple(data)?.forEach(item => {
-                    item.range = docs.rangeAtSpace();
-                    completion.push(item);
-                });
-                return Promise.resolve(completion);
             }
 
             if (docs.rangeAtHtmlClassPhp()) {
-                Completion.simple(data)?.forEach(item => {
-                    item.range = docs.rangeAtSpace();
-                    completion.push(item);
-                });
-                return Promise.resolve(completion);
             }
 
-            return completion;
+            return Promise.resolve(undefined);
         },
-    }, ' ');
+    }, ...trigger);
 
     subscriptions.push(provider);
 }
 
-async function completionBsPhpHtml() {
+async function activateYii2(context: ExtensionContext): Promise<void> {
 
+    const subscriptions = context.subscriptions;
+    const lang = ['php', 'html', 'javascript'];
+    const trigger = [' '];
+    const provider = languages.registerCompletionItemProvider(lang, {
+        async provideCompletionItems(document, position, token, ctx): Promise<Completion[]> {
+            const completion: Completion[] = [];
+            const docs = new DocumentHelper(document, position);
+            const fileData = readFiles(fileNameYii2);
+
+            if (docs.rangeAtHtmlClass()) {
+                return Promise.resolve(Completion.simpleRangeSpace(fileData, document, position))
+            }
+
+            if (docs.rangeAtHtmlClassPhp()) {
+                return Promise.resolve(Completion.simpleRangeSpace(fileData, document, position))
+            }
+
+            return Promise.resolve(undefined);
+        },
+    }, ...trigger);
+
+    subscriptions.push(provider);
 }
 
-async function completionBsJs() {
+async function activateWordpress(context: ExtensionContext): Promise<void> {
 
 }
