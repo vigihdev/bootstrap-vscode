@@ -1,5 +1,5 @@
 import { ExtensionContext, workspace } from "vscode";
-import { saveFile } from "./fs2/files";
+import { saveFile } from "./vs/fsApi";
 import path = require("path");
 
 interface IExtensionInit {

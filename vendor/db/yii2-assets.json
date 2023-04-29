@@ -1,15 +1,4 @@
 [
-    "--circle",
-    "--circle-danger",
-    "--circle-dark",
-    "--circle-info",
-    "--circle-light",
-    "--circle-primary",
-    "--circle-secondary",
-    "--circle-success",
-    "--circle-warning",
-    "--loader",
-    "--loader-backdrop",
     "absolute",
     "accordion",
     "active",
@@ -2266,5 +2255,16 @@
     "zdepth-6",
     "zdepth-7",
     "zdepth-8",
-    "zdepth-9"
+    "zdepth-9",
+    "--circle",
+    "--circle-danger",
+    "--circle-dark",
+    "--circle-info",
+    "--circle-light",
+    "--circle-primary",
+    "--circle-secondary",
+    "--circle-success",
+    "--circle-warning",
+    "--loader",
+    "--loader-backdrop"
 ]

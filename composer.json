@@ -1,0 +1,24 @@
+{
+    "name": "thrubus/bootstrap-vscode",
+    "description": "Bootstrap Alat devoleper Vscode",
+    "authors": [
+        {
+            "name": "Dobrak",
+            "email": "vigihdev@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "cli\\": "vendor/cli/src/",
+            "vsPhpCommon\\": "vendor/vs-php-common/src/"
+        },
+        "files": [
+            "vendor/bin/functions.php"
+        ]
+    },
+    "require": {
+        "webmozart/path-util": "^2.3",
+        "webmozart/glob": "4.7.x-dev"
+    }
+}

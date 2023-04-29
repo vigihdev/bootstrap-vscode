@@ -60,9 +60,7 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 // 	});
 // }
 
-
 export async function saveFile(fileName: string, content: string): Promise<boolean> {
-
 	return new Promise<boolean>(resolve => {
 		const paths = path.parse(fileName);
 		if (fs.existsSync(paths.dir)) {

@@ -3,10 +3,12 @@
 .vscode
 *.vsix
 composer.lock
-composer.json
+# composer.json
 nodemon.json
 package-lock.json
 server.js
 node_modules
 out
-vendor
+
+vendor/[^vs-php-common]*
+# vendor/!vs-php-common
