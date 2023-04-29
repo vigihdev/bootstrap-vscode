@@ -10,8 +10,8 @@ server.js
 node_modules
 out
 
-vendor/autoload.php
-vendor/db
-vendor/composer
-vendor/webmozart
-# vendor/!vs-php-common
+vendor
+# vendor/autoload.php
+# vendor/db
+# vendor/composer
+# vendor/webmozart
