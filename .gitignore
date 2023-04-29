@@ -3,7 +3,7 @@
 .vscode
 *.vsix
 composer.lock
-# composer.json
+composer.json
 nodemon.json
 package-lock.json
 server.js
