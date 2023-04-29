@@ -1,9 +1,0 @@
-{
-    "extensionPath": "/Users/thrubus/vscode/Extension/bootstrap-vscode",
-    "extensionID": "vigihdev.bootstrap-vscode",
-    "dbPath": "/Users/thrubus/vscode/Extension/bootstrap-vscode/vendor/db",
-    "workspaceFolders": [
-        "/Users/thrubus/Sites/vscode-fixtures/mitrav2"
-    ],
-    "workspaceFolder": "/Users/thrubus/Sites/vscode-fixtures/mitrav2"
-}
