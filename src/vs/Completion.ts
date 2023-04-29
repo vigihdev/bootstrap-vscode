@@ -89,7 +89,7 @@ export class Completion extends CompletionItem {
 		const completion: Completion[] = [];
 		const doc = new DocumentHelper(document, position);
 		Completion.simple(items)?.forEach(item => {
-			item.range = doc.rangeAtSpace();
+			item.range = doc.getTextLine().rangeAtSpace();
 			completion.push(item);
 		})
 		return completion;

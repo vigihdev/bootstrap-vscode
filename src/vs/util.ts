@@ -3,8 +3,9 @@ import * as fs from "fs";
 import * as path from "path";
 import { glob } from "glob";
 import { Uri, workspace } from "vscode";
-import { FILENAME_BOOTSTRAP4, FILENAME_EXTENSION, FILENAME_YII2_ASSETS } from "../constant";
+import { FILENAME_BOOTSTRAP4, FILENAME_EXTENSION, FILENAME_WORDPRESS, FILENAME_YII2_ASSETS } from "../constant";
 import { ContextExt } from "./contextExt";
+import { CharCode } from "../common/charCode";
 
 export const toStrings = (text: any): string => isString(text) ? text : '';
 export const toArray = (text: any): string[] => Array.isArray(text) ? text : [];
@@ -14,6 +15,7 @@ export const toUnique = (items: string[]): string[] => [...new Set(items)];
 export const fileNameExt = ContextExt.getExtension('dbPath') + path.sep + FILENAME_EXTENSION;
 export const fileNameBs4 = ContextExt.getExtension('dbPath') + path.sep + FILENAME_BOOTSTRAP4;
 export const fileNameYii2 = ContextExt.getExtension('dbPath') + path.sep + FILENAME_YII2_ASSETS;
+export const fileNameWordpress = ContextExt.getExtension('dbPath') + path.sep + FILENAME_WORDPRESS;
 
 export function isFile(fileName: string): boolean {
 	return fs.existsSync(fileName) && fs.lstatSync(fileName).isFile();
@@ -39,6 +41,20 @@ export function isFileMinCss(fileName: string): boolean {
 	return isFile(fileName) && fs.existsSync(fileName) && fileName.substr(-8) === '.min.css';
 }
 
+// Block String
+export function isCharaterStartSpace(text: string): boolean {
+	return text.charCodeAt(0) === CharCode.Space;
+}
+
+export function isCharaterEndSpace(text: string): boolean {
+	return text.charCodeAt(text.length - 1) === CharCode.Space;
+}
+
+export function textEndSpace(text: string): string {
+	return text.split(' ').pop();
+}
+// End Block String
+
 // Block Has
 export function hasWorkspaceYii2(): boolean {
 	const pathYii2 = path.join(...[getWorkspacePath(), 'vendor', 'yiisoft', 'yii2']);
@@ -46,7 +62,9 @@ export function hasWorkspaceYii2(): boolean {
 }
 
 export function hasWorkspaceWordpress(): boolean {
-	return false;
+	const files = fs.readdirSync(getWorkspacePath());
+	const fileExist = ['index.php', 'functions.php', 'header.php', 'footer.php', 'style.css']
+	return files && files?.filter(file => fileExist.includes(file)).length === fileExist.length;
 }
 // ENd Block Has
 

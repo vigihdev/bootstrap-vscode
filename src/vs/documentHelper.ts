@@ -1,11 +1,29 @@
-import { Position, TextDocument, Range } from "vscode";
-
+import { Position, TextDocument, Range, TextLine } from "vscode";
+import { isCharaterEndSpace, isCharaterStartSpace, textEndSpace } from "./util";
 
 export interface IListDocument {
 	line: number;
 	text: string;
 	character: number;
 	position: Position;
+}
+
+export interface ITextLineOption {
+	startSpace: boolean;
+}
+
+export interface ITextLineStart extends ITextLineOption {
+	text: string;
+	character: number;
+	position: Position;
+	line: number;
+}
+
+export interface ITextLineEnd extends ITextLineOption {
+	text: string;
+	character: number;
+	position: Position;
+	line: number;
 }
 
 const removeBlockComment = (text: string): string => text.replace(/\/\*[^\r]+?\*\//gi, '');
@@ -44,6 +62,48 @@ const textLineAfterPosition = (regex: RegExp, document: TextDocument, position: 
 		?.pop();
 }
 
+class TextLineAt {
+
+	private position: Position;
+	private textLine: TextLine;
+
+	start: ITextLineStart;
+	end: ITextLineEnd;
+
+	constructor(textLine: TextLine, position: Position) {
+		this.textLine = textLine;
+		this.position = position;
+		const line = position.line;
+		const character = position.character;
+		const text1 = textLine.text.substr(0, character)
+		const text2 = textLine.text.substr(character)
+
+		this.start = {
+			text: text1, character: text1.length,
+			line: line, position: new Position(line, text1.length),
+			startSpace: isCharaterStartSpace(text1)
+		}
+		this.end = {
+			text: text2, character: text2.length,
+			line: line, position: new Position(line, text2.length),
+			startSpace: isCharaterStartSpace(text2)
+		}
+	}
+
+	rangeAtSpace(): Range | undefined {
+
+		if (!isCharaterEndSpace(this.start.text)) {
+			const character1 = this.start.text.length
+			const character2 = textEndSpace(this.start.text).length;
+			const character = character1 - character2;
+			const line = this.start.line;
+			const range = new Range(new Position(line, character), new Position(line, character));
+			return range;
+		}
+		return undefined;
+	}
+
+}
 
 export class DocumentHelper {
 	private document: TextDocument;
@@ -70,6 +130,10 @@ export class DocumentHelper {
 		return undefined;
 	}
 
+	getTextLine(): TextLineAt {
+		return new TextLineAt(this.document.lineAt(this.position), this.position)
+	}
+
 	// FITUR
 	rangeAtHtmlClassPhp(): Range | undefined {
 		return this.getWordRangeAt(/'class'.*=>.*?'[a-z-A-Z-0-9-_\s']+/g);
@@ -77,14 +141,6 @@ export class DocumentHelper {
 
 	rangeAtHtmlClass(): Range | undefined {
 		return this.getWordRangeAt(/class="[a-z-A-Z-0-9-\s<]+.*?"/gi);
-	}
-
-	rangeAtSpace(): Range | undefined {
-		const range = this.getWordRangeAt(/\s[a-z-A-Z-0-9-_]+/g);
-		if (range) {
-			return new Range(new Position(range.start.line, (range.start.character + 1)), range.end);
-		}
-		return undefined;
 	}
 
 	rangeAtStyles(): Range | undefined {

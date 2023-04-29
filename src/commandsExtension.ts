@@ -1,5 +1,5 @@
 import { ExtensionContext, TextDocument, commands, window, workspace } from "vscode";
-import { updateFileYii2 } from "./vs/fsApi";
+import { updateFileWordpress, updateFileYii2 } from "./vs/fsApi";
 
 export async function commandsExtension(context: ExtensionContext): Promise<void> {
 
@@ -15,7 +15,12 @@ export async function commandsExtension(context: ExtensionContext): Promise<void
 		}),
 
 		commands.registerCommand('Bootstrap.Wordpress.Update', async () => {
-			window.showInformationMessage('Test Success Update');
+			const response = await updateFileWordpress();
+			if (response) {
+				window.showInformationMessage('Success Update Wordpress');
+			} else {
+				window.showInformationMessage('Gagal Update Wordpress');
+			}
 		})
 
 	);

@@ -49,6 +49,11 @@
                 "command": "Bootstrap.Yii2.Update",
                 "title": "Bootstrap Yii2 Update Class From Assets",
                 "category": "Bootstrap Yii2 Update"
+            },
+            {
+                "command": "Bootstrap.Wordpress.Update",
+                "title": "Bootstrap Wordpress Update Class From Direectory",
+                "category": "Bootstrap Wordpress Update"
             }
         ]
     },

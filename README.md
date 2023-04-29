@@ -1,3 +1,3 @@
-# bootstrap-vscode
+# Bootstrap Vscode
 
-Hallo nama saya adalah vigih sentosa
+Bootstrap Alat devoleper Vscode. Hallo nama saya adalah vigih sentosa

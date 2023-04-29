@@ -2,63 +2,15 @@ import * as fs from "fs";
 import * as path from "path";
 import * as https from "node:https";
 import { IncomingMessage } from "http";
-import { getWorkspacePath, hasWorkspaceYii2, isFileCss, isFileMinCss, removeBlockComment, removeBodyCss, removeSelectorCss, toArray, toStrings, toUnique } from "./util";
+import { getWorkspacePath, hasWorkspaceWordpress, hasWorkspaceYii2, isFileMinCss, toArray } from "./util";
 import { glob } from "glob";
 import { ContextExt } from "./contextExt";
-import { rtrim } from "../common/strings";
-import { FILENAME_YII2_ASSETS, VENDOR_BIN_SERVER } from "../constant";
-import { workspace } from "vscode";
+import { FILENAME_WORDPRESS, FILENAME_YII2_ASSETS, VENDOR_BIN_SERVER } from "../constant";
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 
 const bootstrap = 'https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css';
 const vendorBinServer = ContextExt.getExtension('extensionPath') + path.sep + VENDOR_BIN_SERVER;
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-// export async function getContent(url: string): Promise<string> {
-// 	return new Promise<string>((resolve, reject) => {
-// 		https.get(url, (res: IncomingMessage) => {
-// 			if (res.statusCode === 200) {
-// 				const chunks = [];
-// 				res.setEncoding('utf-8');
-// 				res.on('data', (data: string) => {
-// 					chunks.push(data);
-// 				});
-
-// 				res.on('end', () => {
-// 					resolve(chunks.join(''))
-// 				})
-// 			}
-// 		}).on('error', (e) => {
-// 			reject(e);
-// 		});
-// 	})
-// }
-
-// export async function getContentBootstrap4Url(): Promise<string[]> {
-// 	return new Promise<string[]>(async (resolve) => {
-// 		const data = await getContent(bootstrap);
-// 		const result: string[] = [];
-// 		if (data.length > 0) {
-// 			let content = data
-// 				.replace(/\/\*.*/g, '')
-// 				.replace(/\*\s.*/g, '')
-// 				.replace(/\*\//g, '')
-// 				.replace(/{.*?}/g, '')
-// 				.replace(/\[.*?\]/g, '')
-// 				.replace(/:[:a-z-A-Z\(]+.*?\)/g, '')
-// 				.replace(/[>+]+/g, '')
-// 				.match(/\.[\w+-]+/g);
-
-// 			if (Array.isArray(content)) {
-// 				let newdata = content.map(d => d.substr(1)).filter(d => isNaN(parseInt(d.charAt(0))))
-// 				newdata.sort();
-// 				result.push(...new Set(newdata))
-// 			}
-// 			resolve(result);
-// 		}
-// 		resolve(result);
-// 	});
-// }
 
 export async function saveFile(fileName: string, content: string): Promise<boolean> {
 	return new Promise<boolean>(resolve => {
@@ -109,7 +61,17 @@ export async function scannFileYii2(): Promise<string[]> {
 	});
 }
 
-function scannFileWordpress() {
+export async function scannFileWordpress() {
+	return new Promise<string[]>(async resolve => {
+		if (hasWorkspaceWordpress()) {
+			const basePath = path.join(...[getWorkspacePath(), 'style.css']);
+
+			if (fs.existsSync(basePath)) {
+				resolve([basePath]);
+			}
+		}
+		resolve([]);
+	});
 }
 // End Block scann File
 
@@ -128,6 +90,22 @@ export async function updateFileYii2(): Promise<boolean> {
 		resolve(false);
 	});
 }
+
+export async function updateFileWordpress(): Promise<boolean> {
+	return new Promise<boolean>(async resolve => {
+
+		if (hasWorkspaceWordpress() && fs.existsSync(ContextExt.getVendorDB()) && fs.lstatSync(ContextExt.getVendorDB()).isDirectory()) {
+			const files = await scannFileWordpress();
+
+			if (files.length > 0) {
+				const saveAsFile = `${ContextExt.getVendorDB()}${path.sep}${FILENAME_WORDPRESS}`;
+				const response = await serverSaveAsFiles(`${files.join(' ')}||${saveAsFile}`);
+				resolve(response);
+			}
+		}
+		resolve(false);
+	});
+}
 // End Block Update File
 
 // Block Server File
@@ -138,9 +116,11 @@ export const runServer = (methodName: string, param: string): ChildProcessWithou
 export async function serverSaveAsFiles(param: string): Promise<boolean> {
 	return new Promise<boolean>(resolve => {
 		const process = runServer(`saveAsFiles`, param);
+
 		process.stdout.on("data", (chunk: Buffer) => {
 			resolve(true)
 		});
+
 		process.stdout.on("error", () => {
 			resolve(false)
 		})
