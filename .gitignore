@@ -2,16 +2,7 @@
 .DS_Store
 .vscode
 *.vsix
-composer.lock
-composer.json
-nodemon.json
-package-lock.json
-server.js
+*-lock.json
 node_modules
 out
-
-vendor
-# vendor/autoload.php
-# vendor/db
-# vendor/composer
-# vendor/webmozart
+scripts

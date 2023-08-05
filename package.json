@@ -22,49 +22,16 @@
         "type": "git",
         "url": "https://github.com/vigihdev/bootstrap-vscode.git"
     },
-    "contributes": {
-        "configuration": {
-            "title": "Bootstrap Config",
-            "properties": {
-                "bootstrap.Yii2.settings.excludeList": {
-                    "type": "array",
-                    "default": [
-                        "**/node_modules/**",
-                        "**/bower2*/**"
-                    ],
-                    "description": "Bootstrap Yii2 \n\nGlob Patterns are accepted."
-                },
-                "bootstrap.Yii2.settings.includeItems": {
-                    "type": [
-                        "array",
-                        "null"
-                    ],
-                    "default": null,
-                    "description": "Bootstrap Yii2 include partial files."
-                }
-            }
-        },
-        "commands": [
-            {
-                "command": "Bootstrap.Yii2.Update",
-                "title": "Bootstrap Yii2 Update Class From Assets",
-                "category": "Bootstrap Yii2 Update"
-            },
-            {
-                "command": "Bootstrap.Wordpress.Update",
-                "title": "Bootstrap Wordpress Update Class From Direectory",
-                "category": "Bootstrap Wordpress Update"
-            }
-        ]
-    },
     "main": "out/extension.js",
     "files": [
         "out/**/*"
     ],
     "scripts": {
         "del:out": "rm -r out",
-        "compile": "tsc -p ./",
+        "clone:db": "cp -r src/db out/",
+        "compile": "tsc -p ./ && npm run clone:db",
         "watch": "tsc -watch -p ./",
+        "task": "node ./scripts/task.js $*",
         "lint": "eslint src --ext ts --fix"
     },
     "devDependencies": {
@@ -75,9 +42,12 @@
         "typescript": "^4.9.4"
     },
     "dependencies": {
-        "@types/express": "^4.17.15",
-        "express": "^4.18.2",
-        "glob": "^10.2.2",
-        "promise-socket": "^7.0.0"
+        "@vigihdev/text-case": "github:dobrakafter/text-case",
+        "@vigihdev/vs-utils": "github:dobrakafter/vs-utils",
+        "@vigihdev/vs2-code": "github:dobrakafter/vs2-code"
+    },
+    "vsce": {
+        "dependencies": true,
+        "yarn": false
     }
 }

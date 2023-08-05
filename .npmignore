@@ -3,3 +3,4 @@ src
 src/extension.ts
 .github
 .vscode
+scripts
